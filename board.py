@@ -1,23 +1,20 @@
 from tkinter import *
-from events import Events
 
 
 # ? "__funcName" to make it a private function
 
-# state is a string of 1s and 0s
-# 1 = X
-# 0 = O
-# _ = None
+# TODO for later: X is 1 and O is 0
 class TicTacToe:
+    # for the game to start start() needs to be called
 
-    positions = list()
-    state = "_________"
-    XTurn = True
+    positions = list()  # list of tkinter string variables
+    state = "_________"  # the state of the game as a string
+    XTurn = True  # who's turn it is
     buttonWidth = 7
     buttonHeight = 5
     gameEnded = False
     buttonsUnlocked = False
-    events = Events()
+    humanSymbol = "?"
 
     # None payer = human
     def __init__(self, window, XPlayer, OPlayer):
@@ -41,8 +38,19 @@ class TicTacToe:
     def start(self):
 
         while not self.gameEnded:
+
             if self.XTurn:
                 # X turn
+                # if the player is human
+                if self.XPlayer == None:
+                    if self.checkIfGameEnded():
+                        self.buttonsUnlocked = False
+                        break
+                    self.consoleVar.set("Xs turn")
+                    self.humanSymbol = "X"
+                    self.buttonsUnlocked = True
+                    return
+                # get the AI's move
                 self.__setPosition(
                     self.XPlayer.getMove(self.__getValidMoveIndexes()), "X"
                 )
@@ -52,7 +60,18 @@ class TicTacToe:
                 self.XTurn = False
             else:
                 # O turn
+                # if the player is human
 
+                if self.OPlayer == None:
+                    if self.checkIfGameEnded():
+                        self.buttonsUnlocked = False
+
+                        break
+                    self.consoleVar.set("Os turn")
+                    self.humanSymbol = "O"
+                    self.buttonsUnlocked = True
+                    return
+                # get the AI's move
                 self.__setPosition(
                     self.OPlayer.getMove(self.__getValidMoveIndexes()), "O"
                 )
@@ -83,41 +102,50 @@ class TicTacToe:
             return self.__OWon()
 
     def checkIfGameEnded(self):
+        print(
+            "--\n"
+            + self.state[:3]
+            + "\n"
+            + self.state[3:6]
+            + "\n"
+            + self.state[6:]
+            + "\n--"
+        )
         if self.__allCharactersSame(self.state[:3]):  # top row
             print(self.state[:3] + "1")
             self.findWhoWon(self.state[:3])
-        elif self.__allCharactersSame(self.state[3:6]):  # middle row
+        if self.__allCharactersSame(self.state[3:6]):  # middle row
             print(self.state[3:6] + "2")
             self.findWhoWon(self.state[3:6])
-        elif self.__allCharactersSame(self.state[6:]):  # bottom row
+        if self.__allCharactersSame(self.state[6:]):  # bottom row
             print(self.state[6:] + "3")
             self.findWhoWon(self.state[6:])
-        elif self.__allCharactersSame(
+        if self.__allCharactersSame(
             (self.state[0] + self.state[4] + self.state[8])
         ):  # left to right diagonal
             print((self.state[0] + self.state[4] + self.state[8]) + "4")
             self.findWhoWon((self.state[0] + self.state[4] + self.state[8]))
-        elif self.__allCharactersSame(
+        if self.__allCharactersSame(
             (self.state[2] + self.state[4] + self.state[6])
         ):  # right to left diagonal
             print((self.state[2] + self.state[4] + self.state[6]) + "5")
             self.findWhoWon((self.state[2] + self.state[4] + self.state[6]))
-        elif self.__allCharactersSame(
+        if self.__allCharactersSame(
             self.state[0] + self.state[3] + self.state[6]
         ):  # left column
             print(self.state[0] + self.state[3] + self.state[6] + "6")
             self.findWhoWon(self.state[0] + self.state[3] + self.state[6])
-        elif self.__allCharactersSame(
+        if self.__allCharactersSame(
             self.state[1] + self.state[4] + self.state[7]
         ):  # middle column
             print(self.state[1] + self.state[4] + self.state[7] + "7")
             self.findWhoWon(self.state[1] + self.state[4] + self.state[7])
-        elif self.__allCharactersSame(
+        if self.__allCharactersSame(
             self.state[2] + self.state[5] + self.state[8]
         ):  # right column
             print(self.state[2] + self.state[5] + self.state[8] + "8")
             self.findWhoWon(self.state[2] + self.state[5] + self.state[8])
-        elif "_" not in self.state:
+        if "_" not in self.state:
             # full board nobody won
             print(self.state)
             return self.__noOneWon()
@@ -132,11 +160,21 @@ class TicTacToe:
                 return False
         return True
 
+    # button method
     def __change(self, position):
-        if self.buttonsUnlocked:
-            self.positions[position].set(position)
+        if self.buttonsUnlocked and self.state[position] == "_":
+            self.__setPosition(position, self.humanSymbol)
             self.buttonsUnlocked = False
 
+            if self.XTurn:
+                self.XTurn = False
+            else:
+                self.XTurn = True
+
+            self.checkIfGameEnded()
+            self.start()
+
+    # creates the buttons for the board
     def __createMainButtons(self, frame):
         for row in range(3):
             for column in range(3):
@@ -151,6 +189,7 @@ class TicTacToe:
                 button.grid(row=row, column=column)
                 self.positions.append(strVar)
 
+    # resets the game
     def __reset(self):
         # reset board
         # --buttons
@@ -162,10 +201,11 @@ class TicTacToe:
         self.XTurn = True
         # reset conole var
         self.consoleVar.set("")
-        # reset gemeEnded
+        # reset gameEnded
         self.gameEnded = False
         self.start()
 
+    # creates the reset button and console
     def __createBottom(self, frame):
 
         self.resetButton = Button(
@@ -178,7 +218,7 @@ class TicTacToe:
         self.resetButton.grid(row=0, column=0, sticky="nsew", rowspan=2)
 
         self.consoleVar = StringVar()
-        self.consoleVar.set("~sample~")
+        self.consoleVar.set("")
         self.consoleLabel = Label(frame, textvariable=self.consoleVar)
         self.consoleLabel.grid(row=0, column=1, rowspan=2)
 

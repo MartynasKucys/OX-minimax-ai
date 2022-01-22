@@ -13,3 +13,4 @@ class RandomAI(AI):
             return random.choice(validMoves)
         else:
             return None
+

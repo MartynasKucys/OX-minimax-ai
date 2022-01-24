@@ -1,6 +1,2 @@
-# OX-mimimax-ai
-
-
-
-## Utility function
-f(x) = (number_of_free_spaces + 1) * \[+/-\](based on who won the game)
+# OX-minimax-ai
+## A Tic tac toe game with an AI that uses minimax algorithm to make moves

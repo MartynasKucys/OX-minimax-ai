@@ -52,7 +52,12 @@ class TicTacToe:
                     return
                 # get the AI's move
                 self.__setPosition(
-                    self.XPlayer.getMove(self.__getValidMoveIndexes()), "X"
+                    self.XPlayer.getMove(
+                        validMoves=self.__getValidMoveIndexes(),
+                        state=self.state,
+                        isXTurn=True,
+                    ),
+                    "X",
                 )
                 # check if game ended
                 if self.checkIfGameEnded():
@@ -73,7 +78,12 @@ class TicTacToe:
                     return
                 # get the AI's move
                 self.__setPosition(
-                    self.OPlayer.getMove(self.__getValidMoveIndexes()), "O"
+                    self.OPlayer.getMove(
+                        validMoves=self.__getValidMoveIndexes(),
+                        state=self.state,
+                        isXTurn=False,
+                    ),
+                    "O",
                 )
                 # check if game ended
                 if self.checkIfGameEnded():
@@ -102,53 +112,54 @@ class TicTacToe:
             return self.__OWon()
 
     def checkIfGameEnded(self):
-        print(
-            "--\n"
-            + self.state[:3]
-            + "\n"
-            + self.state[3:6]
-            + "\n"
-            + self.state[6:]
-            + "\n--"
-        )
+        # print(
+        #     "--\n"
+        #     + self.state[:3]
+        #     + "\n"
+        #     + self.state[3:6]
+        #     + "\n"
+        #     + self.state[6:]
+        #     + "\n--"
+        # )
+        if "_" not in self.state:
+            # full board nobody won
+            # print(self.state)
+            self.__noOneWon()
+
         if self.__allCharactersSame(self.state[:3]):  # top row
-            print(self.state[:3] + "1")
+            # print(self.state[:3] + "1")
             self.findWhoWon(self.state[:3])
         if self.__allCharactersSame(self.state[3:6]):  # middle row
-            print(self.state[3:6] + "2")
+            # print(self.state[3:6] + "2")
             self.findWhoWon(self.state[3:6])
         if self.__allCharactersSame(self.state[6:]):  # bottom row
-            print(self.state[6:] + "3")
+            # print(self.state[6:] + "3")
             self.findWhoWon(self.state[6:])
         if self.__allCharactersSame(
             (self.state[0] + self.state[4] + self.state[8])
         ):  # left to right diagonal
-            print((self.state[0] + self.state[4] + self.state[8]) + "4")
+            # print((self.state[0] + self.state[4] + self.state[8]) + "4")
             self.findWhoWon((self.state[0] + self.state[4] + self.state[8]))
         if self.__allCharactersSame(
             (self.state[2] + self.state[4] + self.state[6])
         ):  # right to left diagonal
-            print((self.state[2] + self.state[4] + self.state[6]) + "5")
+            # print((self.state[2] + self.state[4] + self.state[6]) + "5")
             self.findWhoWon((self.state[2] + self.state[4] + self.state[6]))
         if self.__allCharactersSame(
             self.state[0] + self.state[3] + self.state[6]
         ):  # left column
-            print(self.state[0] + self.state[3] + self.state[6] + "6")
+            # print(self.state[0] + self.state[3] + self.state[6] + "6")
             self.findWhoWon(self.state[0] + self.state[3] + self.state[6])
         if self.__allCharactersSame(
             self.state[1] + self.state[4] + self.state[7]
         ):  # middle column
-            print(self.state[1] + self.state[4] + self.state[7] + "7")
+            # print(self.state[1] + self.state[4] + self.state[7] + "7")
             self.findWhoWon(self.state[1] + self.state[4] + self.state[7])
         if self.__allCharactersSame(
             self.state[2] + self.state[5] + self.state[8]
         ):  # right column
-            print(self.state[2] + self.state[5] + self.state[8] + "8")
+            # print(self.state[2] + self.state[5] + self.state[8] + "8")
             self.findWhoWon(self.state[2] + self.state[5] + self.state[8])
-        if "_" not in self.state:
-            # full board nobody won
-            print(self.state)
-            return self.__noOneWon()
 
         else:
             return False

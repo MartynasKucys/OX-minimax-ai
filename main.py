@@ -1,12 +1,12 @@
 import tkinter as tk
 import board
-import player
+import AI
 
 gameWindow = tk.Tk()
-# player.RandomAI = ai that makes random moves
-# player.minimaxAI = ai that uses the minimax algorithm
+# opponent.RandomAI = ai that makes random moves
+# opponent.minimaxAI = ai that uses the minimax algorithm
 # None = human player
-game = board.TicTacToe(gameWindow, None, None)
+game = board.TicTacToe(gameWindow, None, AI.minimaxAI())
 
 game.start()
 
